@@ -3,6 +3,8 @@
 Unstyled, accessible UI components for Phoenix and Phoenix LiveView.
 To be styled with the CSS framework of your choice.
 
+![Screenshot](preview.png)
+
 ## Goals & Rules
 
 - Provide unstyled Phoenix components as building blocks for your own UI components
