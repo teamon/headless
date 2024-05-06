@@ -70,22 +70,6 @@ defmodule Headless.Examples do
   end
 end
 
-defmodule Headless.Examples.HomeLive do
-  use Headless.Examples, :live_view
-
-  def mount(_params, _session, socket) do
-    {:ok, socket}
-  end
-
-  def render(assigns) do
-    ~H"""
-    <ul>
-      <li><.link href={~p"/toggle"}>Toggle</.link></li>
-    </ul>
-    """
-  end
-end
-
 defmodule Headless.Examples.Router do
   use Phoenix.Router
   import Phoenix.LiveView.Router
@@ -97,8 +81,7 @@ defmodule Headless.Examples.Router do
   scope "/", Headless.Examples do
     pipe_through :browser
 
-    live "/", HomeLive
-    live "/toggle", Toggle
+    live "/", FormLive
   end
 end
 
@@ -111,6 +94,7 @@ defmodule Headless.Examples.Endpoint do
   plug Plug.Static, at: "/phoenix_live_view", from: :phoenix_live_view
 
   plug Plug.Static, at: "/", from: :headless, only: ~w(assets)
+
   if code_reloading? do
     socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
     plug Phoenix.LiveReloader

@@ -5,6 +5,9 @@ defmodule Headless do
   Toggle (switch) component.
 
   Uses regular checkbox input under the hood.
+
+  Example:
+      <.toggle field={form[:is_admin]}/>
   """
 
   attr :field, Phoenix.HTML.FormField, required: true
@@ -22,6 +25,116 @@ defmodule Headless do
       <.input type="checkbox" role="switch" field={@field} {@rest} class={slotattr(@input, :class)} />
       <%= render_slot(@inner_block) %>
     </label>
+    """
+  end
+
+  @doc """
+  Combobox (select + search) component.
+
+  This component is built from the ground up to be compatible with Phoenix LiveView
+  including dynamicly changing the list of options.
+  Under the hood this component uses a hidden input to store the selected value
+  to ensure seamless integration with Phoenix forms.
+  Options are rendered server-side using `:option` slot.
+  The client-side dropdown and search functionality is provided by Alpine.js
+  operating directly on the rendered DOM.
+
+  Features supported:
+  - Client-side search
+  - Keyboard navigation (arrows)
+  - Keyboard selection (enter)
+  - Mouse selection (click)
+
+  Example:
+      <.combobox field={form[:user_id]} options={@users} value={&1 &1.id} searchkey={& [&1.name, &1.email]}>
+        <:selected :let={user}><%= user.name %></:selected>
+        <:option :let={user}><%= user.name %> - <%= user.email %></:option>
+      </.combobox>
+
+  """
+
+  attr :field, Phoenix.HTML.FormField
+  attr :options, :list
+  attr :value, :any, doc: "Function returning value for option"
+  attr :searchkey, :any, doc: "Function returning search key for option"
+  attr :class, :any, default: nil
+  attr :rest, :global
+
+  slot :selected, doc: "Slot rendering the selected option" do
+    attr :class, :any
+  end
+
+  slot :option, doc: "Slot rendering option inside the panel"
+
+  slot :placeholder, doc: "Placeholder shown when no option is selected" do
+    attr :class, :any
+  end
+
+  slot :button, doc: "Button that opens the panel" do
+    attr :class, :any
+  end
+
+  slot :search, doc: "Search input" do
+    attr :class, :any
+    attr :placeholder, :string
+  end
+
+  slot :panel, doc: "Container for options" do
+    attr :class, :any
+  end
+
+  def combobox(assigns) do
+    ~H"""
+    <div x-data="headlesscombobox()" x-bind="main" class={@class} {@rest}>
+      <!-- Button -->
+      <button x-bind="button" type="button" class={slotattr(@button, :class)}>
+        <%= for slot <- @placeholder do %>
+          <span x-show="selected === null || selected === ''" class={slot[:class]}>
+            <%= render_slot(slot) %>
+          </span>
+        <% end %>
+
+        <%= for option <- @options do %>
+          <span
+            x-data={data(value: to_string(@value.(option)))}
+            x-show="isSelected()"
+            class={@selected[:class]}
+            style="display: none"
+          >
+            <%= render_slot(@selected, option) %>
+          </span>
+        <% end %>
+
+        <%= render_slot(@button) %>
+      </button>
+      <!-- Search Input -->
+      <input
+        x-bind="search"
+        style="display: none"
+        type="text"
+        placeholder={slotattr(@search, :placeholder)}
+        class={slotattr(@search, :class)}
+      />
+      <!-- Hidden input -->
+      <.input field={@field} type="hidden" x-bind="input" />
+      <!-- Panel -->
+      <ul x-bind="panel" style="display: none" class={slotattr(@panel, :class)}>
+        <%= for {option, index} <- Enum.with_index(@options) do %>
+          <li
+            x-data={
+              data(
+                index: index,
+                key: to_string(@searchkey.(option)),
+                value: to_string(@value.(option))
+              )
+            }
+            x-bind="option"
+          >
+            <%= render_slot(@option, option) %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
     """
   end
 

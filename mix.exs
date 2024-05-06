@@ -32,9 +32,9 @@ defmodule Headless.MixProject do
       {:phoenix_live_view, "~> 0.16"},
 
       # Dev & Test
-      {:ecto, "~> 3.11", only: :dev},
-      {:phoenix_ecto, "~> 4.4", only: :dev},
-      {:jason, "~> 1.2", only: :dev},
+      {:ecto, "~> 3.11", only: [:dev, :test]},
+      {:phoenix_ecto, "~> 4.4", only: [:dev, :test]},
+      {:jason, "~> 1.2", only: [:dev, :test]},
       {:bandit, ">= 0.0.0", only: :dev},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:recode, "~> 0.6", only: [:dev, :test], runtime: false}
