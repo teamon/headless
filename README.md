@@ -14,6 +14,13 @@ To be styled with the CSS framework of your choice.
 - Components must work with standard Phoenix forms
 - Components must be accessible (aria attributes, keyboard navigation, focus, etc.)
 
+## Components
+
+| Name                          | Status         |
+| ----------------------------- | -------------- |
+| Toggle (Switch)               | 🏗️ In progress |
+| Combobox (Select with search) | 🏗️ In progress |
+
 ## Installation
 
 The package can be installed by adding `headless` to your list of dependencies in `mix.exs`:
