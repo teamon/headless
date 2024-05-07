@@ -29,7 +29,7 @@ defmodule Headless.MixProject do
   def application do
     if Mix.env() == :dev do
       [
-        mod: {Headless.Examples.Application, []},
+        mod: {Headless.Demo.Application, []},
         extra_applications: [:logger]
       ]
     else
@@ -38,19 +38,19 @@ defmodule Headless.MixProject do
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(:dev), do: ["examples", "lib"]
+  defp elixirc_paths(:dev), do: ["demo", "lib"]
   defp elixirc_paths(_), do: ["lib"]
 
   defp deps do
     [
       {:phoenix_live_view, "~> 0.16"},
+      {:jason, "~> 1.2"},
 
       # Dev & Test
-      {:ecto, "~> 3.11", only: [:dev, :test]},
-      {:phoenix_ecto, "~> 4.4", only: [:dev, :test]},
-      {:jason, "~> 1.2", only: [:dev, :test]},
-      {:bandit, ">= 0.0.0", only: :dev},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:bandit, ">= 0.0.0", only: :dev},
+      {:phoenix_ecto, "~> 4.4", only: [:dev, :test]},
+      {:ecto, "~> 3.11", only: [:dev, :test]},
       {:recode, "~> 0.6", only: [:dev, :test], runtime: false},
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]

@@ -1,7 +1,7 @@
 import Config
 
 if config_env() == :dev do
-  config :headless, Headless.Examples.Endpoint,
+  config :headless, Headless.Demo.Endpoint,
     url: [host: "localhost"],
     http: [ip: {127, 0, 0, 1}, port: 5001],
     adapter: Bandit.PhoenixAdapter,
