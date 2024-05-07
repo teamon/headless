@@ -19,32 +19,24 @@ defmodule Headless.Demo.Storybook do
     }
   end
 
+  @headless [
+    Headless.Avatar,
+    Headless.Input,
+    Headless.Toggle
+  ]
+
   @modules [
-    {"Components",
-     [
-       Headless.Avatar,
-       Headless.Input,
-       Headless.Toggle
-     ]},
-    {"Styled with DaisyUI",
-     [
-       Headless.Demo.DaisyUI
-     ]}
+    Headless.Demo.DaisyUI | @headless
   ]
 
   @impl true
   def mount(_params, _session, socket) do
-    groups = groups(@modules)
-    {:ok, assign(socket, component: nil, groups: groups)}
+    {:ok, assign(socket, component: nil, components: components(@modules), headless: @headless)}
   end
 
   @impl true
   def handle_params(%{"id" => id}, _uri, socket) do
-    component =
-      socket.assigns.groups
-      |> Enum.flat_map(fn {_, cs} -> cs end)
-      |> Enum.find(fn c -> c.id == id end)
-
+    component = Enum.find(socket.assigns.components, fn c -> c.id == id end)
     {:noreply, assign(socket, :component, component)}
   end
 
@@ -61,13 +53,12 @@ defmodule Headless.Demo.Storybook do
     </div>
 
     <div class="flex p-4 gap-4">
-      <ul class="menu bg-base-200 w-64 rounded-box">
-        <%= for {title, components} <- @groups do %>
+      <div>
+        <ul class="menu bg-base-200 w-64 rounded-box">
+          <li class="menu-title">High-level Components</li>
           <li>
-            <h2 class="menu-title"><%= title %></h2>
-
             <ul class="font-mono">
-              <%= for component <- components do %>
+              <%= for component <- list(@components, Headless.Demo.DaisyUI) do %>
                 <li>
                   <.link patch={"/#{component.id}"}>
                     <%= component.name %>
@@ -76,8 +67,29 @@ defmodule Headless.Demo.Storybook do
               <% end %>
             </ul>
           </li>
-        <% end %>
-      </ul>
+          <li>
+            <h2 class="menu-title">Headless Components</h2>
+
+            <ul>
+              <%= for module <- @headless do %>
+                <li>
+                  <h2 class="menu-title"><%= name(module) %></h2>
+
+                  <ul class="font-mono">
+                    <%= for component <- list(@components, module) do %>
+                      <li>
+                        <.link patch={"/#{component.id}"}>
+                          <%= component.name %>
+                        </.link>
+                      </li>
+                    <% end %>
+                  </ul>
+                </li>
+              <% end %>
+            </ul>
+          </li>
+        </ul>
+      </div>
 
       <div :if={@component} class="w-full">
         <div class="mb-10">
@@ -87,12 +99,12 @@ defmodule Headless.Demo.Storybook do
           <p class="text-sm text-gray-700"><%= @component.desc %></p>
 
           <%= for example <- @component.examples do %>
-            <fieldset class="relative border border-base-200 my-8 rounded-lg">
+            <fieldset class="relative border border-base-500 my-8 rounded-lg">
               <legend class="absolute text-xs uppercase bg-base-200 text-black-900 px-2">
                 <%= example.label %>
               </legend>
               <div class="grid grid-cols-1 rounded-lg pt-2">
-                <div class="p-5 bg-base-100">
+                <div class="p-5 bg-base-100 flex gap-4">
                   <%= render_code(@component, example) %>
                 </div>
                 <div class="text-sm p-5 bg-secondary-content">
@@ -107,16 +119,19 @@ defmodule Headless.Demo.Storybook do
     """
   end
 
-  defp groups(groups) do
-    for {name, modules} <- groups do
-      components =
-        for module <- modules,
-            component <- extract(module),
-            do: component
-
-      {name, components}
-    end
+  defp components(modules) do
+    for module <- modules,
+        component <- extract(module),
+        do: component
   end
+
+  defp list(components, module) do
+    for component <- components,
+        module == component.mod,
+        do: component
+  end
+
+  defp name(module), do: Enum.join(Enum.drop(Module.split(module), 1), ".")
 
   defp extract(mod) do
     components = mod.__components__()

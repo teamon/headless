@@ -10,30 +10,37 @@ defmodule Headless.Demo.DaisyUI do
 
   Storybook: Image
       <.avatar src="https://github.com/teamon.png" alt="@teamon" initials="TT"/>
+      <.avatar src="https://github.com/hodak.png" alt="@hodak" initials="AH"/>
 
   Storybook: Missing image
       <.avatar src={nil} alt="@teamon" initials="TT"/>
 
   Storybook: Bad image
       <.avatar src="https://example.com" alt="@teamon" initials="TT"/>
+
+  Storybook: Online / Offline
+      <.avatar src="https://github.com/teamon.png" alt="@teamon" initials="TT" online={true}/>
+      <.avatar src="https://github.com/teamon.png" alt="@teamon" initials="TT" online={false}/>
   """
 
   attr :src, :string, default: nil
   attr :alt, :string, default: nil
+  attr :online, :boolean, default: nil
   attr :initials, :string
 
   def avatar(assigns) do
     ~H"""
-    <div class="avatar">
-      <div class="w-12 rounded-full">
-        <Headless.avatar src={@src} alt={@alt}>
-          <:fallback>
-            <div class="bg-accent w-12 h-12 flex items-center justify-center text-xl font-bold">
-              <%= @initials %>
-            </div>
-          </:fallback>
-        </Headless.avatar>
-      </div>
+    <div class="w-12 h-12 rounded-full">
+      <Headless.avatar class={[
+        "avatar placeholder",
+        @online == true && "online",
+        @online == false && "offline"
+      ]}>
+        <Headless.Avatar.img src={@src} alt={@alt} class="rounded-full" />
+        <Headless.Avatar.fallback class="bg-neutral text-neutral-content rounded-full w-12">
+          <%= @initials %>
+        </Headless.Avatar.fallback>
+      </Headless.avatar>
     </div>
     """
   end

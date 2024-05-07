@@ -4,31 +4,38 @@
   const data = () => {
     return {
       // state
-      status: "loading",
+      src: null,
       // functions
       init() {
         this.$nextTick(() => {
-          const image = this.$refs.image;
-          if (!image) return;
-          image.onload = () => {
-            this.status = "loaded";
+          const src = this.$refs.image.dataset.src;
+          if (!src) return;
+
+          const media = new Image();
+          media.onload = () => {
+            this.src = src;
           };
-          image.onerror = () => {
-            this.status = "error";
+          media.onerror = () => {
+            this.src = null;
           };
+          media.src = src;
         });
       },
       // binds
       image: {
         ["x-ref"]: "image",
         ["x-show"]() {
-          return this.status === "loaded";
+          return !!this.src;
         },
+        ["x-bind:src"]: "src",
       },
       fallback: {
         ["x-ref"]: "fallback",
         ["x-show"]() {
-          return this.status != "loaded";
+          return !this.src;
+        },
+        ["@click"]() {
+          this.src = "http://www.gravatar.com/avatar/";
         },
       },
     };

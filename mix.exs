@@ -14,7 +14,14 @@ defmodule Headless.MixProject do
       elixir: "~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      releases: [
+        headless: [
+          strip_beams: [
+            keep: ["Docs"]
+          ]
+        ]
+      ]
     ]
   end
 
@@ -27,13 +34,18 @@ defmodule Headless.MixProject do
   end
 
   def application do
+    extra_applications = [
+      :logger,
+      :runtime_tools
+    ]
+
     if Mix.env() == :dev do
       [
         mod: {Headless.Demo.Application, []},
-        extra_applications: [:logger]
+        extra_applications: extra_applications
       ]
     else
-      [extra_applications: [:logger]]
+      [extra_applications: extra_applications]
     end
   end
 

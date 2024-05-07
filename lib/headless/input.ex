@@ -7,7 +7,7 @@ defmodule Headless.Input do
   Heavily based on default Phoenix generated CoreComponents
 
   Storybook: Checkbox
-      <.input type="checkbox"/>
+      <.input field={@form[:is_admin]} type="checkbox"/>
   """
   attr :field, Phoenix.HTML.FormField
 
