@@ -18,6 +18,9 @@ defmodule Headless.Demo.Layouts do
 
         <script src="/assets/avatar.js">
         </script>
+        <script src="/assets/popover.js">
+        </script>
+
         <%!-- <script src="https://unpkg.com/alpinejs" defer>
         </script> --%>
         <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/csp@3.x.x/dist/cdn.min.js">

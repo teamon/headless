@@ -22,6 +22,7 @@ defmodule Headless.Demo.Storybook do
   @headless [
     Headless.Avatar,
     Headless.Input,
+    Headless.Popover,
     Headless.Toggle
   ]
 

@@ -22,6 +22,7 @@
         });
       },
       // binds
+      main: {},
       image: {
         ["x-ref"]: "image",
         ["x-show"]() {
@@ -33,9 +34,6 @@
         ["x-ref"]: "fallback",
         ["x-show"]() {
           return !this.src;
-        },
-        ["@click"]() {
-          this.src = "http://www.gravatar.com/avatar/";
         },
       },
     };
