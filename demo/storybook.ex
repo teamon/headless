@@ -8,9 +8,14 @@ defmodule Headless.Demo.Storybook do
   defp default_assigns do
     data = %User{}
     types = %{name: :string, email: :string, age: :integer, is_admin: :boolean}
-    params = %{name: "Callum", email: "callum@example.com", age: 27}
+    params = %{}
 
-    changeset = Ecto.Changeset.cast({data, types}, params, Map.keys(types))
+    changeset =
+      {data, types}
+      |> Ecto.Changeset.cast(params, Map.keys(types))
+      |> Ecto.Changeset.validate_required([:email])
+      |> Map.put(:action, :insert)
+
     form = Phoenix.Component.to_form(changeset)
 
     %{
@@ -19,20 +24,19 @@ defmodule Headless.Demo.Storybook do
     }
   end
 
-  @headless [
-    Headless.Avatar,
-    Headless.Input,
-    Headless.Popover,
-    Headless.Toggle
+  @menu [
+    {"High-level Components", Headless.Demo.DaisyUI},
+    {"Headless API", Headless}
   ]
 
   @modules [
-    Headless.Demo.DaisyUI | @headless
+    Headless.Demo.DaisyUI,
+    Headless
   ]
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, component: nil, components: components(@modules), headless: @headless)}
+    {:ok, assign(socket, component: nil, components: components(@modules), menu: @menu)}
   end
 
   @impl true
@@ -56,39 +60,20 @@ defmodule Headless.Demo.Storybook do
     <div class="flex p-4 gap-4">
       <div>
         <ul class="menu bg-base-200 w-64 rounded-box">
-          <li class="menu-title">High-level Components</li>
-          <li>
-            <ul class="font-mono">
-              <%= for component <- list(@components, Headless.Demo.DaisyUI) do %>
-                <li>
-                  <.link patch={"/#{component.id}"}>
-                    <%= component.name %>
-                  </.link>
-                </li>
-              <% end %>
-            </ul>
-          </li>
-          <li>
-            <h2 class="menu-title">Headless Components</h2>
-
-            <ul>
-              <%= for module <- @headless do %>
-                <li>
-                  <h2 class="menu-title"><%= name(module) %></h2>
-
-                  <ul class="font-mono">
-                    <%= for component <- list(@components, module) do %>
-                      <li>
-                        <.link patch={"/#{component.id}"}>
-                          <%= component.name %>
-                        </.link>
-                      </li>
-                    <% end %>
-                  </ul>
-                </li>
-              <% end %>
-            </ul>
-          </li>
+          <%= for {title, module} <-  @menu do %>
+            <li class="menu-title"><%= title %></li>
+            <li>
+              <ul class="font-mono">
+                <%= for component <- list(@components, module) do %>
+                  <li>
+                    <.link patch={"/#{component.id}"}>
+                      <%= component.name %>
+                    </.link>
+                  </li>
+                <% end %>
+              </ul>
+            </li>
+          <% end %>
         </ul>
       </div>
 

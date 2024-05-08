@@ -16,11 +16,12 @@ To be styled with the CSS framework of your choice.
 
 ## Components
 
-| Name                          | Status         |
-| ----------------------------- | -------------- |
-| Avatar                        | 🏗️ In progress |
-| Toggle (Switch)               | 🏗️ In progress |
-| Combobox (Select with search) | 🏗️ In progress |
+| Name     | Status         |
+| -------- | -------------- |
+| Avatar   | ✅ Done        |
+| Combobox | 🏗️ In progress |
+| Popover  | ✅ Done        |
+| Toggle   | ✅ Done        |
 
 ## Installation
 
@@ -66,3 +67,5 @@ mix phx.server
 ## Inspirations
 
 - [headless UI](https://headlessui.com)
+- [Sprout UI](https://github.com/TunkShif/sprout_ui)
+- [Zig](https://zagjs.com/)

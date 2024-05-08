@@ -22,7 +22,6 @@
         });
       },
       // binds
-      main: {},
       image: {
         ["x-ref"]: "image",
         ["x-show"]() {

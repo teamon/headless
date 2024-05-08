@@ -5,8 +5,8 @@
     return {
       // state
       isOpen: false,
-      // functions
 
+      // functions
       toggle() {
         this.isOpen ? this.close() : this.open();
       },
@@ -18,33 +18,41 @@
       },
 
       // binds
-      main: {
-        ["x-ref"]: "main",
+      root: {
+        ["x-ref"]: "root",
+        ["x-id"]() {
+          return ["hsp-content"];
+        },
         ["@keydown.escape.prevent.stop"]() {
-          console.log("escape");
           this.close();
           this.$refs.trigger.focus();
         },
         ["@focusin.window"](event) {
-          console.log("focusin");
-          if (!this.$refs.main.contains(event.target)) {
+          if (!this.$refs.root.contains(event.target)) {
             this.close();
           }
         },
         ["@click.outside"]() {
-          console.log("click.outside");
           this.close();
         },
       },
       trigger: {
         ["x-ref"]: "trigger",
         ["@click"]() {
-          console.log("click");
           this.toggle();
+        },
+        [":aria-expanded"]() {
+          return this.isOpen;
+        },
+        [":aria-controls"]() {
+          return this.$id("hsp-content");
         },
       },
       content: {
         ["x-ref"]: "content",
+        [":id"]() {
+          return this.$id("hsp-content");
+        },
         ["x-show"]() {
           return this.isOpen;
         },
