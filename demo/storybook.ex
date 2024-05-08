@@ -53,12 +53,21 @@ defmodule Headless.Demo.Storybook do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="navbar bg-base-100">
-      <.link patch="/" class="btn btn-ghost text-xl">headless</.link>
+    <div class="navbar">
+      <div class="flex-1">
+        <.link patch="/" class="btn btn-ghost text-xl">headless</.link>
+      </div>
+      <div class="flex-none">
+        <ul class="menu menu-horizontal px-1">
+          <li>
+            <.link href="https://github.com/teamon/headless">GitHub</.link>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <div class="flex p-4 gap-4">
-      <div>
+      <div class="mr-8">
         <ul class="menu bg-base-200 w-64 rounded-box">
           <%= for {title, module} <-  @menu do %>
             <li class="menu-title"><%= title %></li>
@@ -66,7 +75,12 @@ defmodule Headless.Demo.Storybook do
               <ul class="font-mono">
                 <%= for component <- list(@components, module) do %>
                   <li>
-                    <.link patch={"/#{component.id}"}>
+                    <.link
+                      patch={"/#{component.id}"}
+                      class={[
+                        @component && @component.id == component.id && "active"
+                      ]}
+                    >
                       <%= component.name %>
                     </.link>
                   </li>
@@ -78,22 +92,88 @@ defmodule Headless.Demo.Storybook do
       </div>
 
       <div :if={@component} class="w-full">
-        <div class="mb-10">
-          <h2 class="font-mono">
-            <.link patch={"/#{@component.id}"}><%= @component.mfa %></.link>
-          </h2>
-          <p class="text-sm text-gray-700"><%= @component.desc %></p>
+        <div class="space-y-8">
+          <div class="prose">
+            <%!-- Name --%>
+            <h2>
+              <.link class="font-mono" patch={"/#{@component.id}"}><%= @component.mfa %></.link>
+            </h2>
+            <p><%= @component.desc %></p>
+          </div>
+
+          <div :if={@component.attrs != []} class="overflow-x-auto">
+            <table class="table table-sm w-full">
+              <thead>
+                <tr class="border-b-0">
+                  <th class="bg-base-200 rounded-s-box flex items-center gap-2 py-3">
+                    Attribute name
+                  </th>
+                  <th class="bg-base-200 py-3">Type</th>
+                  <th class="bg-base-200 rounded-e-box py-3">Description</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <%= for attr <- @component.attrs do %>
+                  <tr>
+                    <th class="w-2/12 font-normal">
+                      <span class="whitespace-nowrap font-mono lowercase"><%= attr.name %></span>
+                    </th>
+                    <td class="w-2/12">
+                      <span class="badge badge-sm badge-outline whitespace-nowrap">
+                        <%= type(attr.type) %>
+                      </span>
+                    </td>
+                    <td class="w-8/12 min-w-[20rem] prose text-sm">
+                      <%= {:safe, attr.doc || ""} %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+
+          <div :if={@component.slots != []} class="overflow-x-auto">
+            <table class="table table-sm w-full">
+              <thead>
+                <tr class="border-b-0">
+                  <th class="bg-base-200 rounded-s-box flex items-center gap-2 py-3">
+                    Slot name
+                  </th>
+                  <th class="bg-base-200 py-3"></th>
+                  <th class="bg-base-200 rounded-e-box py-3"></th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <%= for slot <- @component.slots do %>
+                  <tr>
+                    <th class="w-2/12 font-normal">
+                      <span class="whitespace-nowrap font-mono lowercase"><%= slot.name %></span>
+                    </th>
+                    <td class="w-2/12"></td>
+                    <td class="w-8/12 min-w-[20rem] prose text-sm"><%= {:safe, slot.doc || ""} %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+
+          <%!-- Examples --%>
+          <div class="prose">
+            <h3>Examples</h3>
+          </div>
 
           <%= for example <- @component.examples do %>
-            <fieldset class="relative border border-base-500 my-8 rounded-lg">
+            <fieldset class="relative border border-base-500 rounded-lg bg-base-100">
               <legend class="absolute text-xs uppercase bg-base-200 text-black-900 px-2">
                 <%= example.label %>
               </legend>
-              <div class="grid grid-cols-1 rounded-lg pt-2">
+              <div class="grid grid-cols-1 pt-2">
                 <div class="p-5 bg-base-100 flex gap-4">
                   <%= render_code(@component, example) %>
                 </div>
-                <div class="text-sm p-5 bg-secondary-content">
+                <div class="text-sm p-5 bg-secondary-content rounded-b-lg">
                   <pre><%= example.code %></pre>
                 </div>
               </div>
@@ -101,9 +181,39 @@ defmodule Headless.Demo.Storybook do
           <% end %>
         </div>
       </div>
+
+      <div :if={!@component}>
+        <.home components={@components} />
+      </div>
     </div>
     """
   end
+
+  defp home(assigns) do
+    ~H"""
+    <div class="grid grid-cols-3 gap-10">
+      <%= for component <- @components,
+            component.mod == Headless.Demo.DaisyUI,
+            [example | _] = component.examples do %>
+        <fieldset class="relative border border-base-500 rounded-lg bg-base-100">
+          <div class="flex flex-col justify-between h-full rounded-lg">
+            <div class="p-5 bg-base-100 flex gap-4  rounded-t-lg">
+              <%= render_code(component, example) %>
+            </div>
+            <.link patch={"/#{component.id}"}>
+              <div class="text-sm p-5 bg-base-200 rounded-b-lg font-mono hover:bg-base-300">
+                <%= component.name %>
+              </div>
+            </.link>
+          </div>
+        </fieldset>
+      <% end %>
+    </div>
+    """
+  end
+
+  defp type({:struct, module}), do: Enum.join(Module.split(module), ".")
+  defp type(atom), do: atom
 
   defp components(modules) do
     for module <- modules,
@@ -116,8 +226,6 @@ defmodule Headless.Demo.Storybook do
         module == component.mod,
         do: component
   end
-
-  defp name(module), do: Enum.join(Enum.drop(Module.split(module), 1), ".")
 
   defp extract(mod) do
     components = mod.__components__()
@@ -135,6 +243,10 @@ defmodule Headless.Demo.Storybook do
        ) do
     {desc, examples} =
       doc
+      |> String.split("## Attributes", trim: false)
+      |> List.first()
+      |> String.split("## Slots", trim: false)
+      |> List.first()
       |> String.split(["\r\n", "\n"], trim: false)
       |> Enum.reduce({[], []}, fn
         "Storybook: " <> label, {desc, examples} ->

@@ -1,5 +1,5 @@
 app = 'headless'
-primary_region = 'waw'
+primary_region = 'fra'
 kill_signal = 'SIGTERM'
 
 [build]

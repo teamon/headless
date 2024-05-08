@@ -12,7 +12,7 @@ defmodule Headless.Demo.DaisyUI do
 
   Storybook: Image
       <.avatar src="https://github.com/teamon.png" alt="@teamon" initials="TT"/>
-      <.avatar src="https://github.com/hodak.png" alt="@hodak" initials="AH"/>
+      <.avatar src={nil} alt="@hodak" initials="AH"/>
 
   Storybook: Missing image
       <.avatar src={nil} alt="@teamon" initials="TT"/>
@@ -139,11 +139,11 @@ defmodule Headless.Demo.DaisyUI do
   @doc """
   Error label
 
-  Storybook: No errors
-      <.error field={@form[:name]}/>
-
   Storybook: With errors
       <.error field={@form[:email]}/>
+
+  Storybook: No errors
+      <.error field={@form[:name]}/>
   """
 
   attr :field, Phoenix.HTML.FormField, required: true

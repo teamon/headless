@@ -13,7 +13,7 @@ defmodule Headless.Demo.Layouts do
           rel="stylesheet"
           type="text/css"
         />
-        <script src="https://cdn.tailwindcss.com">
+        <script src="https://cdn.tailwindcss.com?plugins=typography">
         </script>
 
         <script src="/assets/avatar.js">
@@ -26,7 +26,7 @@ defmodule Headless.Demo.Layouts do
         <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/csp@3.x.x/dist/cdn.min.js">
         </script>
       </head>
-      <body>
+      <body class="bg-gray-50 min-h-screen">
         <%= @inner_content %>
       </body>
     </html>
@@ -65,13 +65,13 @@ defmodule Headless.Demo.Endpoint do
     same_site: "Lax"
   ]
 
-  socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
+  socket("/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]])
 
   plug Plug.Static, at: "/", from: :headless, only: ~w(assets)
 
   # plug Plug.Static, at: "/phoenix_live_view", from: :phoenix_live_view
   if code_reloading? do
-    socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
+    socket("/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket)
     plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
   end

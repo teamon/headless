@@ -3,6 +3,12 @@
 Unstyled, accessible UI components for Phoenix and Phoenix LiveView.
 To be styled with the CSS framework of your choice.
 
+![Preview](preview.png)
+
+## Demo
+
+[See demo website](https://headless.fly.dev)
+
 ## Goals & Rules
 
 - Provide unstyled Phoenix components as building blocks for your own UI components
@@ -16,12 +22,22 @@ To be styled with the CSS framework of your choice.
 
 ## Components
 
-| Name     | Status         |
-| -------- | -------------- |
-| Avatar   | ✅ Done        |
-| Combobox | 🏗️ In progress |
-| Popover  | ✅ Done        |
-| Toggle   | ✅ Done        |
+| Component    | Functions        | Status         |
+| ------------ | ---------------- | -------------- |
+| Avatar       | `use_avatar/1`   | ✅ Done        |
+| Checkbox     | `input/1`        | ✅ Done        |
+| Clipboard    |                  | 🗺️ Planned     |
+| Combobox     | `use_combobox/1` | 🏗️ In progress |
+| Command      |                  | 🏗️ In progress |
+| Dialog       |                  | 🗺️ Planned     |
+| File Preview |                  | 🗺️ Planned     |
+| Input OTP    |                  | 🗺️ Planned     |
+| Popover      | `use_popover/1`  | ✅ Done        |
+| Radio button |                  | 🗺️ Planned     |
+| Tabs         |                  | 🗺️ Planned     |
+| Text input   | `input/1`        | ✅ Done        |
+| Textarea     |                  | 🗺️ Planned     |
+| Toggle       | `use_toggle/1`   | ✅ Done        |
 
 ## Installation
 
@@ -37,21 +53,22 @@ end
 
 ## Usage
 
-You should not use Headless components directly but use them as building blocks for your own components.
+You should not use Headless components directly but use them as building blocks for your own components. Most components are built using `use_*` functions that provide the necessary HTML attributes to provide the functionality leaving all tag rendering to the user. This way every element can be 100% customized.
 
-See [examples](examples) directory for styling examples.
+See [demo](demo) directory for styling examples.
 
 ```elixir
 defmodule MyAppWeb.Components do
   use Phoenix.Component, global_prefixes: ~w(x-)
+  import Headless
 
   attr :field, Phoenix.HTML.FormField
 
   def toggle(assigns) do
     ~H"""
-    <Headless.toggle field={@field} class="...">
-      <span class="...">Toggle</span>
-    </Headless.toggle>
+    <.use_toggle :let={t}>
+      <.input {t.input} field={@field} class="toggle" {@rest} />
+    </.use_toggle>
     """
   end
 end

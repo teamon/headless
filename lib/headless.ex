@@ -21,8 +21,18 @@ defmodule Headless do
       </.use_avatar>
   """
 
-  attr :src, :string, default: nil
-  slot :inner_block
+  attr :src, :string, doc: "Image source URL"
+
+  slot :inner_block,
+    required: true,
+    doc: """
+      The default slot will be rendered with these attributes:
+      <ul>
+        <li><code>root</code> - the root element attibuted</li>
+        <li><code>image</code> - the image element attibuted</li>
+        <li><code>fallback</code> - the fallback element attibuted</li>
+      </ul>
+    """
 
   def use_avatar(assigns) do
     render(assigns, %{
@@ -51,7 +61,16 @@ defmodule Headless do
       </.use_popover>
   """
 
-  slot :inner_block
+  slot :inner_block,
+    required: true,
+    doc: """
+      The default slot will be rendered with these attributes:
+      <ul>
+        <li><code>root</code> - the root element attibuted</li>
+        <li><code>trigger</code> - the trigger element attibuted</li>
+        <li><code>content</code> - the content element attibuted</li>
+      </ul>
+    """
 
   def use_popover(assigns) do
     render(assigns, %{
@@ -83,7 +102,14 @@ defmodule Headless do
       </.use_toggle>
   """
 
-  slot :inner_block
+  slot :inner_block,
+    required: true,
+    doc: """
+      The default slot will be rendered with these attributes:
+      <ul>
+        <li><code>input</code> - the input element attibuted</li>
+      </ul>
+    """
 
   def use_toggle(assigns) do
     render(assigns, %{
@@ -102,15 +128,16 @@ defmodule Headless do
   Storybook: Checkbox
       <.input field={@form[:is_admin]} type="checkbox"/>
   """
-  attr :field, Phoenix.HTML.FormField
+  attr :field, Phoenix.HTML.FormField,
+    doc: "a form field struct retrieved from the form, for example: <code>@form[:email]</code>"
 
-  attr :id, :any, default: nil
-  attr :name, :any
-  attr :value, :any
+  attr :id, :string, default: nil
+  attr :name, :string
+  attr :value, :string
 
   attr :type, :string, default: "text"
   attr :checked, :boolean, doc: "the checked flag for checkbox inputs"
-  attr :rest, :global
+  attr :rest, :global, doc: "additional attributes to be passed to the input element"
   slot :inner_block
 
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
@@ -162,12 +189,17 @@ defmodule Headless do
       </.input_error>
   """
 
-  attr :field, Phoenix.HTML.FormField, required: true
-  slot :inner_block, required: true
+  attr :field, Phoenix.HTML.FormField,
+    required: true,
+    doc: "a form field struct retrieved from the form, for example: <code>@form[:email]</code>"
+
+  slot :inner_block,
+    required: true,
+    doc: "The default slot will be rendered with <code>{message, options}</code> tuple"
 
   def input_error(assigns) do
     ~H"""
-    <%= for error <- dbg(@field.errors) do %>
+    <%= for error <- @field.errors do %>
       <%= render_slot(@inner_block, error) %>
     <% end %>
     """
