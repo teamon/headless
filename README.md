@@ -3,6 +3,9 @@
 Unstyled, accessible UI components for Phoenix and Phoenix LiveView.
 To be styled with the CSS framework of your choice.
 
+> [!WARNING]
+> This project is in a very early stage - see [Components](#components) list below.
+
 ![Preview](preview.png)
 
 ## Demo
@@ -22,22 +25,22 @@ To be styled with the CSS framework of your choice.
 
 ## Components
 
-| Component    | Functions        | Status         |
-| ------------ | ---------------- | -------------- |
-| Avatar       | `use_avatar/1`   | ✅ Done        |
-| Checkbox     | `input/1`        | ✅ Done        |
-| Clipboard    |                  | 🗺️ Planned     |
-| Combobox     | `use_combobox/1` | 🏗️ In progress |
-| Command      |                  | 🏗️ In progress |
-| Dialog       |                  | 🗺️ Planned     |
-| File Preview |                  | 🗺️ Planned     |
-| Input OTP    |                  | 🗺️ Planned     |
-| Popover      | `use_popover/1`  | ✅ Done        |
-| Radio button |                  | 🗺️ Planned     |
-| Tabs         |                  | 🗺️ Planned     |
-| Text input   | `input/1`        | ✅ Done        |
-| Textarea     |                  | 🗺️ Planned     |
-| Toggle       | `use_toggle/1`   | ✅ Done        |
+| Component    | Functions         | Status         |
+| ------------ | ----------------- | -------------- |
+| Avatar       | `use_avatar/1`    | ✅ Done        |
+| Checkbox     | `input/1`         | ✅ Done        |
+| Clipboard    | `use_clipboard/1` | ✅ Done        |
+| Combobox     | `use_combobox/1`  | 🏗️ In progress |
+| Command      |                   | 🏗️ In progress |
+| Dialog       |                   | 🗺️ Planned     |
+| File Preview |                   | 🗺️ Planned     |
+| Input OTP    |                   | 🗺️ Planned     |
+| Popover      | `use_popover/1`   | ✅ Done        |
+| Radio button |                   | 🗺️ Planned     |
+| Tabs         |                   | 🗺️ Planned     |
+| Text input   | `input/1`         | ✅ Done        |
+| Textarea     |                   | 🗺️ Planned     |
+| Toggle       | `use_toggle/1`    | ✅ Done        |
 
 ## Installation
 
