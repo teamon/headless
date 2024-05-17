@@ -1,0 +1,15 @@
+{
+  "name": "headless",
+  "version": "0.1.0",
+  "description": "Headless UI Components for Phoenix",
+  "license": "MIT",
+  "module": "./priv/static/headless.esm.js",
+  "exports": {
+    "import": "./priv/static/headless.esm.js"
+  },
+  "author": "Tymon Tobolski (https://teamon.me)",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/teamon/headless.git"
+  }
+}

@@ -74,6 +74,55 @@ defmodule MyAppWeb.Components do
 end
 ```
 
+## How to include JavaScript
+
+You can include all headless components and the bundled Alpine.js with a single line:
+
+```js
+// assets/js/app.js
+import headless from 'headless'
+headless.start()
+```
+
+If you'd rather pick one a few components you can import them one by one:
+
+```js
+// assets/js/app.js
+
+// import Alpine.js from headless or bring your own
+import { Alpine } from 'headless'
+
+// import components
+import Avatar from 'headless/avatar'
+import Clipboard from 'headless/clipboard'
+
+// setup components
+Avatar.register(Alpine)
+Clipboard.register(Alpine)
+
+// start Alpine
+Alpine.start()
+```
+
+If you want to add your own components use this:
+
+
+```js
+// assets/js/app.js
+import headless, { Alpine } from 'headless'
+
+// register headless components
+headless.register(Alpine)
+
+// register your own components
+Alpine.data("my-thing", () => { ... })
+
+// start alpine
+Alpine.start()
+```
+
+
+
 ## Development
 
 ```bash
