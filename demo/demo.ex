@@ -18,6 +18,8 @@ defmodule Headless.Demo.Layouts do
 
         <script src="/assets/avatar.js">
         </script>
+        <script src="/assets/clipboard.js">
+        </script>
         <script src="/assets/popover.js">
         </script>
 

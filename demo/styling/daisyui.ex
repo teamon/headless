@@ -106,6 +106,60 @@ defmodule Headless.Demo.DaisyUI do
   end
 
   @doc """
+  Clipboard
+
+  Storybook: Input
+      <.use_clipboard :let={c}>
+        <div {c.root} class="flex gap-1">
+          <input {c.content} type="text" value="Hello, Input!" readonly class="input input-bordered w-full max-w-xs" />
+          <button {c.trigger} class="btn">Copy</button>
+        </div>
+      </.use_clipboard>
+
+  Storybook: Textarea
+      <.use_clipboard :let={c}>
+        <div {c.root} class="flex gap-1">
+          <textarea {c.content} readonly class="textarea textarea-bordered">Hello, Textarea!</textarea>
+          <button {c.trigger} class="btn">Copy</button>
+        </div>
+      </.use_clipboard>
+
+
+  Storybook: Any other HTML
+      <.use_clipboard :let={c}>
+        <div {c.root}>
+          <div class="stats shadow">
+            <div class="stat">
+              <div class="stat-title">Total Page Views</div>
+              <div {c.content} class="stat-value">89,400</div>
+              <div class="stat-desc">21% more than last month</div>
+            </div>
+          </div>
+
+          <button {c.trigger} class="btn">Copy stat</button>
+        </div>
+      </.use_clipboard>
+
+
+  """
+  def clipboard(assigns) do
+    ~H"""
+    <.use_clipboard :let={c}>
+      <div {c.root} class="flex gap-1">
+        <input
+          {c.content}
+          type="text"
+          value={@text}
+          readonly
+          class="input input-bordered w-full max-w-xs"
+        />
+        <button {c.trigger} class="btn">Copy</button>
+      </div>
+    </.use_clipboard>
+    """
+  end
+
+  @doc """
   Text Input
 
   Storybook: Default

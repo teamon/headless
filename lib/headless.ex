@@ -117,6 +117,21 @@ defmodule Headless do
     })
   end
 
+  def use_clipboard(assigns) do
+    render(assigns, %{
+      root: %{
+        "x-data" => "hsClipboard",
+        "x-bind" => "root"
+      },
+      trigger: %{
+        "x-bind" => "trigger"
+      },
+      content: %{
+        "x-bind" => "content"
+      }
+    })
+  end
+
   @doc """
   Render input for a form field.
 
