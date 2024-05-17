@@ -4,35 +4,44 @@ defmodule Headless do
   @doc """
   Avatar component
 
-  Storybook: Image
-      <.use_avatar :let={a} src="https://github.com/teamon.png">
-        <div {a.root}>
-          <img {a.image} alt="@teamon" />
-          <div {a.fallback}>TT</div>
-        </div>
-      </.use_avatar>
+  ## Elements
 
-  Storybook: Missing Image
-      <.use_avatar :let={a} src={nil}>
-        <div {a.root}>
-          <img {a.image} alt="@teamon" />
-          <div {a.fallback}>TT</div>
-        </div>
-      </.use_avatar>
+  - `root` - root element
+  - `image` - `<img>` element
+  - `fallback` - fallback element
+
+  ## Example
+
+      defmodule ExampleAvatarComponents do
+        use Phoenix.Component
+        import Headless
+
+        attr :src, :any
+        attr :alt, :any
+        attr :initials, :string
+
+        def avatar(assigns) do
+          ~H\"\"\"
+          <.use_avatar :let={a} src={@src}>
+            <div {a.root}>
+              <img {a.image} alt={@alt} />
+              <div {a.fallback}><%= @initials %></div>
+            </div>
+          </.use_avatar>
+          \"\"\"
+        end
+
+        def example(assigns) do
+          ~H\"\"\"
+          <.avatar src="https://example.com/avatar.jpg" alt="Avatar" initials="JD" />
+          <.avatar src={nil} alt="Avatar" initials="JD" />
+          \"\"\"
+        end
+      end
   """
 
   attr :src, :string, doc: "Image source URL"
-
-  slot :inner_block,
-    required: true,
-    doc: """
-      The default slot will be rendered with these attributes:
-      <ul>
-        <li><code>root</code> - the root element attibuted</li>
-        <li><code>image</code> - the image element attibuted</li>
-        <li><code>fallback</code> - the fallback element attibuted</li>
-      </ul>
-    """
+  slot :inner_block, required: true
 
   def use_avatar(assigns) do
     render(assigns, %{
@@ -50,27 +59,54 @@ defmodule Headless do
   end
 
   @doc """
-  Avatar component
+  Popover component
 
-  Storybook: Default
-      <.use_popover :let={p}>
-        <div {p.root}>
-          <button {p.trigger}>Open</button>
-          <div {p.content}>Content</div>
-        </div>
-      </.use_popover>
+  ## Elements
+
+  - `root` - root element
+  - `trigger` - element that triggers the popover
+  - `content` - element that contains the popover content
+
+  ## Example
+
+      defmodule ExamplePopoverComponents do
+        use Phoenix.Component
+        import Headless
+
+        slot :trigger
+        slot :content
+
+        def popover(assigns) do
+          ~H\"\"\"
+          <.use_popover :let={p}>
+            <div {p.root}>
+              <button {p.trigger}>
+                <%= render_slot(@trigger) %>
+              </button>
+              <div {p.content}>
+                <%= render_slot(@content) %>
+              </div>
+            </div>
+          </.use_popover>
+          \"\"\"
+        end
+
+        def example(assigns) do
+          ~H\"\"\"
+          <.popover>
+            <:trigger>
+              Open
+            </:trigger>
+            <:content>
+              Hidden message
+            </:content>
+          </.popover>
+          \"\"\"
+        end
+      end
   """
 
-  slot :inner_block,
-    required: true,
-    doc: """
-      The default slot will be rendered with these attributes:
-      <ul>
-        <li><code>root</code> - the root element attibuted</li>
-        <li><code>trigger</code> - the trigger element attibuted</li>
-        <li><code>content</code> - the content element attibuted</li>
-      </ul>
-    """
+  slot :inner_block, required: true
 
   def use_popover(assigns) do
     render(assigns, %{
@@ -96,26 +132,79 @@ defmodule Headless do
 
   Uses regular checkbox input under the hood.
 
-  Storybook: Default
-      <.use_toggle :let={t}>
-        <.input {t.input} field={@form[:name]}/>
-      </.use_toggle>
+  ## Elements
+
+  - `input` - the underlying checkbox element
+
+  ## Example
+
+      defmodule ExampleToggleComponents do
+        use Phoenix.Component
+        import Headless
+
+        def toggle(assigns) do
+          ~H\"\"\"
+          <.use_toggle :let={t}>
+            <.input {t.input} field={@field}/>
+          </.use_toggle>
+          \"\"\"
+        end
+
+        def example(assigns) do
+          ~H\"\"\"
+          <.toggle field={@form[:is_admin]}/>
+          \"\"\"
+        end
+      end
   """
 
-  slot :inner_block,
-    required: true,
-    doc: """
-      The default slot will be rendered with these attributes:
-      <ul>
-        <li><code>input</code> - the input element attibuted</li>
-      </ul>
-    """
+  slot :inner_block, required: true
 
   def use_toggle(assigns) do
     render(assigns, %{
       input: %{type: "checkbox", role: "switch"}
     })
   end
+
+  @doc """
+  Clipboard component.
+
+  Provides copy to clipboard functionality.
+
+  ## Elements
+
+  - `root` - root element
+  - `trigger` - element that triggers the clipboard action
+  - `content` - element that contains the clipboard content
+
+  ## Example
+
+      defmodule ExampleClipboardComponents do
+        use Phoenix.Component
+        import Headless
+
+        attr :text, :string
+
+        def copy_to_clipboard(assigns) do
+          ~H\"\"\"
+          <.use_clipboard :let={c}>
+            <div {c.root}>
+              <input {c.content} type="text" value={@text} readonly/>
+              <button {c.trigger}>Copy</button>
+            </div>
+          </.use_clipboard>
+          \"\"\"
+        end
+
+        def example(assigns) do
+          ~H\"\"\"
+          <.copy_to_clipboard text="Secrets"/>
+          \"\"\"
+        end
+      end
+  """
+
+  slot :inner_block, required: true
 
   def use_clipboard(assigns) do
     render(assigns, %{
@@ -137,10 +226,10 @@ defmodule Headless do
 
   Heavily based on default Phoenix generated CoreComponents
 
-  Storybook: Text input
+  ### Text input
       <.input field={@form[:name]} type="text" placeholder="Name"/>
 
-  Storybook: Checkbox
+  ### Checkbox
       <.input field={@form[:is_admin]} type="checkbox"/>
   """
   attr :field, Phoenix.HTML.FormField,

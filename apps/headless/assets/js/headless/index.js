@@ -8,12 +8,13 @@ export { Alpine, Avatar, Clipboard, Popover }
 
 export default {
   start () {
-    this.register(Alpine)
+    window.Alpine = Alpine
+    this.register()
     Alpine.start()
   },
-  register (alpine) {
-    Avatar.register(alpine)
-    Clipboard.register(alpine)
-    Popover.register(alpine)
+  register () {
+    Avatar.register()
+    Clipboard.register()
+    Popover.register()
   }
 }

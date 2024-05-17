@@ -57,8 +57,8 @@ const component = () => {
   }
 }
 
-component.register = Alpine => {
-  Alpine.data('hsPopover', component)
+component.register = () => {
+  window.Alpine.data('hsPopover', component)
 }
 
 export default component

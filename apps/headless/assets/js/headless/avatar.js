@@ -5,17 +5,17 @@ const component = () => {
 
     // functions
     init () {
-      Clipboard.elo()
-
       this.$nextTick(() => {
         const src = this.$refs.image.dataset.src
         if (!src) return
 
         const media = new Image()
-        media.onload = () => {
+        media.onload = (e) => {
+          console.log("onload", media.complete)
           this.src = src
         }
         media.onerror = () => {
+          console.log("onerror")
           this.src = null
         }
         media.src = src
@@ -39,8 +39,8 @@ const component = () => {
   }
 }
 
-component.register = Alpine => {
-  Alpine.data('hsAvatar', component)
+component.register = () => {
+  window.Alpine.data('hsAvatar', component)
 }
 
 export default component

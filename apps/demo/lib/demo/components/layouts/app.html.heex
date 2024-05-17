@@ -1,6 +1,16 @@
-<main class="px-4 py-20 sm:px-6 lg:px-8">
-  <div class="mx-auto max-w-2xl">
-    <%!-- <.flash_group flash={@flash} /> --%>
-    <%= @inner_content %>
+<div class="navbar">
+  <div class="flex-1">
+    <.link patch="/" class="btn btn-ghost text-xl">headless</.link>
   </div>
-</main>
+  <div class="flex-none">
+    <ul class="menu menu-horizontal px-1">
+      <li>
+        <.link href="https://github.com/teamon/headless">GitHub</.link>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="flex p-4 gap-4">
+  <%= @inner_content %>
+</div>

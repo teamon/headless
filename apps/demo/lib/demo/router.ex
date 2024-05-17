@@ -17,6 +17,7 @@ defmodule Demo.Router do
   scope "/", Demo do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", HomeLive
+    live "/component/:fun", HomeLive
   end
 end

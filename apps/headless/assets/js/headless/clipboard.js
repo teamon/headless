@@ -3,9 +3,7 @@ const component = () => {
     // functions
     copy () {
       const el = this.$refs.content
-      console.log(el)
       const text = el.value === undefined ? el.innerText : el.value
-      console.log(text)
       return window.navigator.clipboard.writeText(text)
     },
 
@@ -25,8 +23,8 @@ const component = () => {
   }
 }
 
-component.register = Alpine => {
-  Alpine.data('hsClipboard', component)
+component.register = () => {
+  window.Alpine.data('hsClipboard', component)
 }
 
 export default component

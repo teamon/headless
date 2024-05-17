@@ -1404,7 +1404,7 @@ var require_reactivity = __commonJS({
   }
 });
 
-// packages/alpinejs/builds/module.js
+// packages/csp/builds/module.js
 var module_exports = {};
 __export(module_exports, {
   Alpine: () => src_default,
@@ -3115,7 +3115,44 @@ var Alpine = {
 };
 var alpine_default = Alpine;
 
-// packages/alpinejs/src/index.js
+// packages/csp/src/evaluator.js
+function cspEvaluator(el, expression) {
+  let dataStack = generateDataStack(el);
+  if (typeof expression === "function") {
+    return generateEvaluatorFromFunction(dataStack, expression);
+  }
+  let evaluator = generateEvaluator(el, expression, dataStack);
+  return tryCatch.bind(null, el, expression, evaluator);
+}
+function generateDataStack(el) {
+  let overriddenMagics = {};
+  injectMagics(overriddenMagics, el);
+  return [overriddenMagics, ...closestDataStack(el)];
+}
+function generateEvaluator(el, expression, dataStack) {
+  return (receiver = () => {
+  }, { scope: scope2 = {}, params = [] } = {}) => {
+    let completeScope = mergeProxies([scope2, ...dataStack]);
+    if (completeScope[expression] === void 0) {
+      throwExpressionError(el, expression);
+    }
+    runIfTypeOfFunction(receiver, completeScope[expression], completeScope, params);
+  };
+}
+function throwExpressionError(el, expression) {
+  console.warn(
+    `Alpine Error: Alpine is unable to interpret the following expression using the CSP-friendly build:
+
+"${expression}"
+
+Read more about the Alpine's CSP-friendly build restrictions here: https://alpinejs.dev/advanced/csp
+
+`,
+    el
+  );
+}
+
+// packages/csp/src/index.js
 var import_reactivity10 = __toESM(require_reactivity());
 
 // packages/alpinejs/src/magics/$nextTick.js
@@ -4076,12 +4113,12 @@ function warnMissingPluginDirective(name, directiveName, slug) {
   directive(directiveName, (el) => warn(`You can't use [x-${directiveName}] without first installing the "${name}" plugin here: https://alpinejs.dev/plugins/${slug}`, el));
 }
 
-// packages/alpinejs/src/index.js
-alpine_default.setEvaluator(normalEvaluator);
+// packages/csp/src/index.js
+alpine_default.setEvaluator(cspEvaluator);
 alpine_default.setReactivityEngine({ reactive: import_reactivity10.reactive, effect: import_reactivity10.effect, release: import_reactivity10.stop, raw: import_reactivity10.toRaw });
 var src_default = alpine_default;
 
-// packages/alpinejs/builds/module.js
+// packages/csp/builds/module.js
 var module_default = src_default;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
