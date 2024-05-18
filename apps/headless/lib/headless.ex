@@ -209,8 +209,7 @@ defmodule Headless do
   def use_clipboard(assigns) do
     render(assigns, %{
       root: %{
-        "x-data" => "hsClipboard",
-        "x-bind" => "root"
+        "x-data" => "hsClipboard"
       },
       trigger: %{
         "x-bind" => "trigger"

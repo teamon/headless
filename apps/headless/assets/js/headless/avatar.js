@@ -11,11 +11,9 @@ const component = () => {
 
         const media = new Image()
         media.onload = (e) => {
-          console.log("onload", media.complete)
           this.src = src
         }
         media.onerror = () => {
-          console.log("onerror")
           this.src = null
         }
         media.src = src

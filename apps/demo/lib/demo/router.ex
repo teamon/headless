@@ -19,5 +19,7 @@ defmodule Demo.Router do
 
     live "/", HomeLive
     live "/component/:fun", HomeLive
+
+    live "/crash", CrashLive
   end
 end

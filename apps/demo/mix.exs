@@ -40,7 +40,7 @@ defmodule Demo.MixProject do
       {:phoenix_ecto, "~> 4.4"},
       {:phoenix_html, "~> 3.3"},
       {:phoenix_live_view, "~> 0.20.1"},
-      {:plug_cowboy, "~> 2.5"},
+      {:bandit, ">= 0.0.0"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
 

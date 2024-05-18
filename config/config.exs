@@ -25,7 +25,7 @@ end
 # Configures the endpoint
 config :demo, Demo.Endpoint,
   url: [host: "localhost"],
-  adapter: Phoenix.Endpoint.Cowboy2Adapter,
+  adapter: Bandit.PhoenixAdapter,
   render_errors: [
     formats: [html: Demo.ErrorHTML, json: Demo.ErrorJSON],
     layout: false

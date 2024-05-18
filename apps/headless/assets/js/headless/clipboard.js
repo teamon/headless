@@ -8,11 +8,7 @@ const component = () => {
     },
 
     // binds
-    root: {
-      ['x-ref']: 'root'
-    },
     trigger: {
-      ['x-ref']: 'trigger',
       ['@click'] () {
         this.copy()
       }

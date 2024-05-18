@@ -119,7 +119,4 @@ defmodule Demo.HomeLive do
     </div>
     """
   end
-
-  defp type({:struct, module}), do: Enum.join(Module.split(module), ".")
-  defp type(atom), do: atom
 end
