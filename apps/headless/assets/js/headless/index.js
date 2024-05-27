@@ -1,26 +1,24 @@
-import Alpine from '../../vendor/alpine.js'
-
 import Avatar from './avatar'
 import Clipboard from './clipboard'
 import Popover from './popover'
 
-export { Alpine, Avatar, Clipboard, Popover }
+export { Avatar, Clipboard, Popover }
+
+let _alpine = null
 
 export default {
-  start () {
-    window.Alpine = Alpine
+  configure(Alpine) {
+    _alpine = Alpine
 
-    Alpine.data(Avatar.id, Avatar)
-    Alpine.data(Clipboard.id, Clipboard)
-    Alpine.data(Popover.id, Popover)
-
-    Alpine.start()
+    _alpine.data(Avatar.id, Avatar)
+    _alpine.data(Clipboard.id, Clipboard)
+    _alpine.data(Popover.id, Popover)
   },
 
   dom: {
     onBeforeElUpdated (from, to) {
       if (from._x_dataStack) {
-        Alpine.clone(from, to)
+        _alpine.clone(from, to)
       }
     }
   }

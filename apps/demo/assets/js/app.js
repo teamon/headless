@@ -1,6 +1,9 @@
 // Import and start headless
+import Alpine from "@alpinejs/csp"
 import headless from "headless"
-headless.start()
+
+headless.configure(Alpine)
+Alpine.start()
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html"

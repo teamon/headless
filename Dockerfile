@@ -1,9 +1,24 @@
 ARG ELIXIR=1.16.1
 ARG ERLANG=26.2.2
 ARG ALPINE=3.19.1
+ARG NODEJS=20.8.0
 
+ARG NODEJS_BUILDER="node:${NODEJS}-alpine"
 ARG ELIXIR_BUILDER="hexpm/elixir:${ELIXIR}-erlang-${ERLANG}-alpine-${ALPINE}"
 ARG RUNTIME="alpine:${ALPINE}"
+
+
+
+FROM ${NODEJS_BUILDER} as nodejs_builder
+
+# prepare build dir
+WORKDIR /app
+
+# install node dependencies
+COPY apps/demo/assets/package.json apps/demo/assets/package-lock.json ./apps/demo/assets/
+RUN npm --prefix ./apps/demo/assets install --no-audit
+
+
 
 FROM ${ELIXIR_BUILDER} as elixir_builder
 
@@ -37,6 +52,7 @@ RUN mix deps.compile
 
 # copy project files
 COPY apps ./apps
+COPY --from=nodejs_builder --chown=nobody:root /app/apps/demo/assets/node_modules /app/apps/demo/assets/node_modules/
 
 # Compile the release
 RUN mix compile
@@ -51,6 +67,8 @@ COPY config/runtime.exs config/
 # Build release
 COPY rel rel
 RUN mix release
+
+
 
 # start a new build stage so that the final image will only contain
 # the compiled release and other runtime necessities

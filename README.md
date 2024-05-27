@@ -54,15 +54,15 @@ def deps do
 end
 ```
 
-Include JavaScript package in your `app.js`:
+Include Alpine and JavaScript package in your `app.js`:
 
 ```js
 // assets/js/app.js
-
-// import and start headless
+import Alpine from "alpinejs"
 import headless from "headless"
-headless.start()
 
+headless.configure(Alpine)
+Alpine.start()
 // ...
 
 // configure LiveSocket
@@ -108,26 +108,28 @@ end
 
 ## Adding your own Alpine components
 
-If you want to add your own Alpine components you can import the bundled Alpine like this:
-
 ```js
 // assets/js/app.js
+import Alpine from "alpinejs"
+import headless from "headless"
 
-import headless, { Alpine } from "headless"
+headless.configure(Alpine)
 
+// add your components
 Alpine.data("my_custom_component", () => ...)
 
-headless.start()
+Alpine.start()
 ```
 
 ## Development
 
 ```bash
+# Install dependencies
+mix deps.get
+npm --prefix ./apps/demo/assets install
+
 # Start development server with examples
 mix phx.server
-
-# Update bundled Alpine
-curl -L https://unpkg.com/@alpinejs/csp/dist/module.cjs.js > ./apps/headless/assets/vendor/alpine.js
 ```
 
 ## Inspirations
