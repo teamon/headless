@@ -112,7 +112,7 @@ defmodule Demo.Storybook do
 
   defp default_assigns do
     data = %User{}
-    types = %{name: :string, email: :string, age: :integer, is_admin: :boolean}
+    types = %{name: :string, avatar: :string, email: :string, age: :integer, is_admin: :boolean}
     params = %{}
 
     changeset =

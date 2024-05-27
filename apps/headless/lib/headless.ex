@@ -1,7 +1,7 @@
 defmodule Headless do
   use Phoenix.Component, global_prefixes: ~w(x-)
 
-  @components [:avatar, :clipboard, :popover, :toggle]
+  @components [:avatar, :clipboard, :popover, :preview, :toggle]
 
   @doc false
   def components, do: Enum.into(@components, %{}, &{&1, apply(__MODULE__, &1, [])})
@@ -237,6 +237,69 @@ defmodule Headless do
       },
       content: %{
         "x-bind" => "content"
+      }
+    }
+  end
+
+  @doc """
+  Impage preview component.
+
+  Provides select file preview.
+
+  ## Elements
+
+  - `root` - root element
+  - `original` - original image element (to be hidden when new one is selected)
+  - `preview` - preview image element
+  - `input` - file input element
+
+  ## Example
+
+      defmodule ExamplePreviewComponents do
+        use Phoenix.Component
+        import Headless
+
+        attr :field, Phoenix.HTML.FormField
+        attr :src, :string
+
+        def upload_with_preview(assigns) do
+          ~H\"\"\"
+          <.use_preview :let={p}>
+            <div {p.root}>
+              <img {p.original} src={@src} class="w-[200px] h-[200px] rounded-full" />
+              <img {p.preview} class="w-[200px] h-[200px] rounded-full" />
+              <.input {p.input} type="file" field={@field} />
+            </div>
+          </.use_preview>
+          \"\"\"
+        end
+
+        def example(assigns) do
+          ~H\"\"\"
+          <.upload_with_preview field={@form[:name]} src={"..."}/>
+          \"\"\"
+        end
+      end
+  """
+
+  slot :inner_block, required: true
+
+  def use_preview(assigns), do: make(assigns, preview())
+
+  @doc false
+  def preview do
+    %{
+      root: %{
+        "x-data" => "hs_preview"
+      },
+      original: %{
+        "x-bind" => "original"
+      },
+      preview: %{
+        "x-bind" => "preview"
+      },
+      input: %{
+        "x-bind" => "input"
       }
     }
   end

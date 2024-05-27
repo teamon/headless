@@ -10,7 +10,7 @@ const component = () => {
         if (!src) return
 
         const media = new Image()
-        media.onload = (e) => {
+        media.onload = e => {
           this.src = src
         }
         media.onerror = () => {
@@ -37,5 +37,5 @@ const component = () => {
   }
 }
 
-component.id = "hs_avatar"
+component.id = 'hs_avatar'
 export default component

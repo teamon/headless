@@ -22,10 +22,10 @@ defmodule Demo.CoreComponents do
       <script type="text/javascript">console.log("avatar init")</script>
   """
 
+  attr :id, :string, default: nil
   attr :src, :string, default: nil
   attr :alt, :string, default: nil
   attr :initials, :string
-  attr :id, :string, default: nil
 
   defc avatar(assigns) do
     ~H"""
@@ -63,7 +63,7 @@ defmodule Demo.CoreComponents do
   defc popover(assigns) do
     ~H"""
     <.use_popover :let={p}>
-      <div {p.root}>
+      <div id={@id} {p.root}>
         <button {p.trigger} class="btn m-1">
           <%= render_slot(@trigger) %>
         </button>
@@ -115,6 +115,31 @@ defmodule Demo.CoreComponents do
         <button {c.trigger} class="btn">Copy</button>
       </div>
     </.use_clipboard>
+    """
+  end
+
+  @doc """
+  Image upload preview
+
+  Storybook: Preview
+      <.preview field={@form[:avatar]} current={"https://github.com/teamon.png"}/>
+  """
+
+  attr :id, :string, default: nil
+  attr :field, Phoenix.HTML.FormField, required: true
+  attr :current, :string
+
+  def preview(assigns) do
+    ~H"""
+    <.use_preview :let={p}>
+      <div id={@id} {p.root} class="flex items-center gap-2">
+        <div class="avatar placeholder w-12 h-12 rounded-full">
+          <img {p.original} src={@current} class="rounded-full" />
+          <img {p.preview} class="rounded-full" />
+        </div>
+        <.input {p.input} type="file" field={@field} />
+      </div>
+    </.use_preview>
     """
   end
 
