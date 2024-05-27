@@ -40,7 +40,7 @@ defmodule Headless.MixProject do
 
   defp deps do
     [
-      {:phoenix_live_view, "~> 0.16"},
+      {:phoenix_live_view, "~> 0.20"},
 
       # Dev & Test
       {:esbuild, "~> 0.2", only: :dev},

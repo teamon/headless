@@ -406,15 +406,18 @@ defmodule Headless do
         end
       end
   """
-  defmacro defc(head, do: body) do
+  defmacro defc({func, _, _} = head, do: body) do
+    # modify caller to include function - necessary for HEEX annotations
+    caller = %{__CALLER__ | function: {func, 1}}
+
     body =
       Macro.prewalk(body, fn
         {:sigil_H, meta, [{:<<>>, _meta, [expr]}, []]} ->
           options = [
             engine: Headless.Compiler,
-            file: __CALLER__.file,
-            line: __CALLER__.line + 1,
-            caller: __CALLER__,
+            file: caller.file,
+            line: caller.line + 1,
+            caller: caller,
             indentation: meta[:indentation] || 0,
             source: expr,
             tag_handler: Phoenix.LiveView.HTMLEngine
