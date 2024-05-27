@@ -1,9 +1,13 @@
 defmodule Demo.Storybook do
   defstruct [:mod, :fun, :desc, :examples, :source]
 
-  def extract(mod) do
+  def source(mod) do
+    Enum.to_list(File.stream!(mod.__info__(:compile)[:source]))
+  end
+
+  def extract(mod, source) do
     components = mod.__components__()
-    source = Enum.to_list(File.stream!(mod.__info__(:compile)[:source]))
+
     {:docs_v1, _ann, _lang, _format, _moduledoc, _metadata, docs} = Code.fetch_docs(mod)
     for doc <- docs, c <- extract_from_doc(doc, mod, {components, source}), do: c
   end

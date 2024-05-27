@@ -3,9 +3,11 @@ defmodule Demo.HomeLive do
 
   alias Demo.Storybook
 
+  @source Storybook.source(Demo.CoreComponents)
+
   @impl true
   def mount(_params, _session, socket) do
-    components = Storybook.extract(Demo.CoreComponents)
+    components = Storybook.extract(Demo.CoreComponents, @source)
     {:ok, assign(socket, component: nil, components: components)}
   end
 
