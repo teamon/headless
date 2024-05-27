@@ -2,7 +2,7 @@ defmodule Headless.MixProject do
   use Mix.Project
 
   @source_url "https://github.com/teamon/headless"
-  @version "0.1.0"
+  @version "0.1.1"
   @description "Headless UI components for Phoenix"
 
   def project do
@@ -18,7 +18,8 @@ defmodule Headless.MixProject do
       elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      aliases: aliases()
+      aliases: aliases(),
+      docs: docs()
     ]
   end
 
@@ -51,7 +52,24 @@ defmodule Headless.MixProject do
   defp aliases do
     [
       "assets.build": ["esbuild module"],
-      "assets.watch": ["esbuild module --watch"]
+      "assets.watch": ["esbuild module --watch"],
+      docs: ["docs", &copy_images/1]
+    ]
+  end
+
+  defp copy_images(_) do
+    File.cp!(
+      Path.expand("../../preview.png", __DIR__),
+      Path.expand("doc/preview.png", __DIR__)
+    )
+  end
+
+  defp docs do
+    [
+      main: "readme",
+      source_url: @source_url,
+      source_ref: "v#{@version}",
+      extras: ["../../README.md", "LICENSE"]
     ]
   end
 end

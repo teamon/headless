@@ -54,83 +54,80 @@ def deps do
 end
 ```
 
+Include JavaScript package in your `app.js`:
+
+```js
+// assets/js/app.js
+
+// import and start headless
+import headless from "headless"
+headless.start()
+
+// ...
+
+// configure LiveSocket
+let liveSocket = new LiveSocket('/live', Socket, {
+  // ...
+
+  // configure dom hook
+  dom: headless.dom
+})
+```
+
+
 ## Usage
 
-You should not use Headless components directly but use them as building blocks for your own components. Most components are built using `use_*` functions that provide the necessary HTML attributes to provide the functionality leaving all tag rendering to the user. This way every element can be 100% customized.
+Headless components are meant to be used as building blocks for your own components.
+Most components are built using `use_*` functions that expose the necessary HTML attributes
+to provide the functionality leaving all tag rendering to the user.
+This way every element can be 100% customized.
 
-See [demo](demo) directory for styling examples.
+See [example app components](./apps/demo/lib/demo/components/core_components.ex).
 
 ```elixir
 defmodule MyAppWeb.Components do
-  use Phoenix.Component, global_prefixes: ~w(x-)
+  use Phoenix.Component
   import Headless
 
-  attr :field, Phoenix.HTML.FormField
+  attr :src, :any
+  attr :alt, :any
+  attr :initials, :string
 
-  def toggle(assigns) do
+  def avatar(assigns) do
     ~H"""
-    <.use_toggle :let={t}>
-      <.input {t.input} field={@field} class="toggle" {@rest} />
-    </.use_toggle>
+    <.use_avatar :let={a} src={@src}>
+      <div {a.root}>
+        <img {a.image} alt={@alt} />
+        <div {a.fallback}><%= @initials %></div>
+      </div>
+    </.use_avatar>
     """
   end
 end
 ```
 
-## How to include JavaScript
+## Adding your own Alpine components
 
-You can include all headless components and the bundled Alpine.js with a single line:
+If you want to add your own Alpine components you can import the bundled Alpine like this:
 
 ```js
 // assets/js/app.js
-import headless from 'headless'
+
+import headless, { Alpine } from "headless"
+
+Alpine.data("my_custom_component", () => ...)
+
 headless.start()
 ```
-
-If you'd rather pick one a few components you can import them one by one:
-
-```js
-// assets/js/app.js
-
-// import Alpine.js from headless or bring your own
-import { Alpine } from 'headless'
-
-// import components
-import Avatar from 'headless/avatar'
-import Clipboard from 'headless/clipboard'
-
-// setup components
-Avatar.register(Alpine)
-Clipboard.register(Alpine)
-
-// start Alpine
-Alpine.start()
-```
-
-If you want to add your own components use this:
-
-
-```js
-// assets/js/app.js
-import headless, { Alpine } from 'headless'
-
-// register headless components
-headless.register(Alpine)
-
-// register your own components
-Alpine.data("my-thing", () => { ... })
-
-// start alpine
-Alpine.start()
-```
-
-
 
 ## Development
 
 ```bash
 # Start development server with examples
 mix phx.server
+
+# Update bundled Alpine
+curl -L https://unpkg.com/@alpinejs/csp/dist/module.cjs.js > ./apps/headless/assets/vendor/alpine.js
 ```
 
 ## Inspirations

@@ -37,8 +37,5 @@ const component = () => {
   }
 }
 
-component.register = () => {
-  window.Alpine.data('hsAvatar', component)
-}
-
+component.id = "hs_avatar"
 export default component

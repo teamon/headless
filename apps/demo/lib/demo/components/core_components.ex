@@ -3,7 +3,7 @@ defmodule Demo.CoreComponents do
   Example of how to use Headless components.
   """
 
-  use Phoenix.Component, global_prefixes: ~w(x-)
+  use Phoenix.Component
 
   import Headless
 
@@ -25,11 +25,12 @@ defmodule Demo.CoreComponents do
   attr :src, :string, default: nil
   attr :alt, :string, default: nil
   attr :initials, :string
+  attr :id, :string, default: nil
 
-  def avatar(assigns) do
+  defc avatar(assigns) do
     ~H"""
     <.use_avatar :let={a} src={@src}>
-      <div class="w-12 h-12 rounded-full">
+      <div id={@id} class="w-12 h-12 rounded-full">
         <div {a.root} class="avatar placeholder">
           <img {a.image} alt={@alt} class="rounded-full" />
           <div {a.fallback} class="bg-neutral text-neutral-content rounded-full w-12">
@@ -50,26 +51,23 @@ defmodule Demo.CoreComponents do
           Open
         </:trigger>
         <:content>
-          <ul class="menu">
-            <li><a>Item 1</a></li>
-            <li><a>Item 2</a></li>
-            <li><a>Item 3</a></li>
-          </ul>
+          Hidden content
         </:content>
       </.popover>
   """
 
+  attr :id, :string, default: nil
   slot :trigger
   slot :content
 
-  def popover(assigns) do
+  defc popover(assigns) do
     ~H"""
     <.use_popover :let={p}>
       <div {p.root}>
         <button {p.trigger} class="btn m-1">
           <%= render_slot(@trigger) %>
         </button>
-        <div {p.content} class="shadow absolute z-[1] bg-base-100 rounded-box">
+        <div {p.content} class="shadow absolute z-[1] bg-base-100 rounded-box p-5">
           <%= render_slot(@content) %>
         </div>
       </div>
@@ -86,7 +84,7 @@ defmodule Demo.CoreComponents do
   attr :field, Phoenix.HTML.FormField, required: true
   attr :rest, :global
 
-  def toggle(assigns) do
+  defc toggle(assigns) do
     ~H"""
     <.use_toggle :let={t}>
       <.input {t.input} field={@field} class="toggle" {@rest} />
@@ -98,15 +96,12 @@ defmodule Demo.CoreComponents do
   Clipboard
 
   Storybook: Input
-      <.use_clipboard :let={c}>
-        <div {c.root} class="flex gap-1">
-          <input {c.content} type="text" value="Hello, Input!" readonly class="input input-bordered w-full max-w-xs" />
-          <button {c.trigger} class="btn">Copy</button>
-        </div>
-      </.use_clipboard>
+      <.clipboard text="Hello, Input!"/>
   """
 
-  def clipboard(assigns) do
+  attr :text, :string
+
+  defc clipboard(assigns) do
     ~H"""
     <.use_clipboard :let={c}>
       <div {c.root} class="flex gap-1">

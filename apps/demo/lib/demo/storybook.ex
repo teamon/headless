@@ -1,10 +1,11 @@
 defmodule Demo.Storybook do
-  defstruct [:mod, :fun, :desc, :examples]
+  defstruct [:mod, :fun, :desc, :examples, :source]
 
   def extract(mod) do
     components = mod.__components__()
+    source = Enum.to_list(File.stream!(mod.__info__(:compile)[:source]))
     {:docs_v1, _ann, _lang, _format, _moduledoc, _metadata, docs} = Code.fetch_docs(mod)
-    for doc <- docs, c <- extract_from_doc(doc, mod, components), do: c
+    for doc <- docs, c <- extract_from_doc(doc, mod, {components, source}), do: c
   end
 
   defp extract_from_doc({{_kind, _name, _arity}, _annotation, _, :none, _}, _, _), do: []
@@ -13,7 +14,7 @@ defmodule Demo.Storybook do
   defp extract_from_doc(
          {{:function, name, 1}, _annotation, _signature, %{"en" => doc}, _metadata},
          mod,
-         components
+         {components, source}
        ) do
     {desc, examples} =
       doc
@@ -53,14 +54,30 @@ defmodule Demo.Storybook do
       end)
       |> Enum.reverse()
 
-    component = components[name]
+    source =
+      case components[name] do
+        %{line: line} ->
+          start = Enum.drop(source, line - 1)
+          n = Enum.take_while(start, &(!String.starts_with?(&1, "  end")))
+
+          start
+          |> Enum.take(Enum.count(n) + 1)
+          |> Enum.map(&String.replace_prefix(&1, "  ", ""))
+          |> IO.iodata_to_binary()
+
+        _ ->
+          ""
+      end
+
+    # dbg(source)
 
     [
       %__MODULE__{
         mod: mod,
         fun: name,
         desc: desc,
-        examples: examples
+        examples: examples,
+        source: source
       }
     ]
   end

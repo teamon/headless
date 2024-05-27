@@ -4058,9 +4058,7 @@ var component = () => {
     }
   };
 };
-component.register = () => {
-  window.Alpine.data("hsAvatar", component);
-};
+component.id = "hs_avatar";
 var avatar_default = component;
 
 // js/headless/clipboard.js
@@ -4083,9 +4081,7 @@ var component2 = () => {
     }
   };
 };
-component2.register = () => {
-  window.Alpine.data("hsClipboard", component2);
-};
+component2.id = "hs_clipboard";
 var clipboard_default = component2;
 
 // js/headless/popover.js
@@ -4145,22 +4141,24 @@ var component3 = () => {
     }
   };
 };
-component3.register = () => {
-  window.Alpine.data("hsPopover", component3);
-};
+component3.id = "hs_popover";
 var popover_default = component3;
 
 // js/headless/index.js
 var headless_default = {
   start() {
     window.Alpine = import_alpine.default;
-    this.register();
+    import_alpine.default.data(avatar_default.id, avatar_default);
+    import_alpine.default.data(clipboard_default.id, clipboard_default);
+    import_alpine.default.data(popover_default.id, popover_default);
     import_alpine.default.start();
   },
-  register() {
-    avatar_default.register();
-    clipboard_default.register();
-    popover_default.register();
+  dom: {
+    onBeforeElUpdated(from, to) {
+      if (from._x_dataStack) {
+        import_alpine.default.clone(from, to);
+      }
+    }
   }
 };
 var export_Alpine = import_alpine.default;

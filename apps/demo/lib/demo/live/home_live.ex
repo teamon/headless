@@ -65,7 +65,7 @@ defmodule Demo.HomeLive do
 
   defp render_component(assigns) do
     ~H"""
-    <div class="space-y-8">
+    <div class="space-y-8" id={"c-#{@component.fun}"}>
       <div class="prose">
         <%!-- Name --%>
         <h2>
@@ -76,25 +76,41 @@ defmodule Demo.HomeLive do
         <p><%= @component.desc %></p>
       </div>
 
-      <div class="prose">
-        <h3>Examples</h3>
-      </div>
+      <div class="grid grid-cols-2 gap-8">
+        <div class="space-y-8">
+          <div class="prose">
+            <h3>Component defintion</h3>
+          </div>
 
-      <%= for example <- @component.examples do %>
-        <fieldset class="relative border border-base-500 rounded-lg bg-base-100">
-          <legend class="absolute text-xs uppercase bg-base-200 text-black-900 px-2">
-            <%= example.label %>
-          </legend>
-          <div class="grid grid-cols-1 pt-2">
-            <div class="p-5 bg-base-100 flex gap-4">
-              <%= Storybook.render_code(@component.mod, example.code) %>
-            </div>
-            <div class="text-sm p-5 bg-secondary-content rounded-b-lg">
-              <pre><%= example.code %></pre>
+          <div class="relative border border-base-500 rounded-lg bg-base-100">
+            <div class="text-sm p-5 bg-secondary-content rounded-b-lg overflow-scroll">
+              <pre><%= @component.source %></pre>
             </div>
           </div>
-        </fieldset>
-      <% end %>
+        </div>
+
+        <div class="space-y-8">
+          <div class="prose">
+            <h3>Example usage</h3>
+          </div>
+
+          <%= for example <- @component.examples do %>
+            <fieldset class="relative border border-base-500 rounded-lg bg-base-100">
+              <legend class="absolute text-xs uppercase bg-base-200 text-black-900 px-2">
+                <%= example.label %>
+              </legend>
+              <div class="grid grid-cols-1 pt-2">
+                <div class="p-5 bg-base-100 flex gap-4">
+                  <%= Storybook.render_code(@component.mod, example.code) %>
+                </div>
+                <div class="text-sm p-5 bg-secondary-content rounded-b-lg overflow-scroll">
+                  <pre><%= example.code %></pre>
+                </div>
+              </div>
+            </fieldset>
+          <% end %>
+        </div>
+      </div>
     </div>
     """
   end

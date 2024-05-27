@@ -6,7 +6,17 @@ defmodule Mono.MixProject do
       apps_path: "apps",
       version: "0.1.0",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      releases: [
+        demo: [
+          applications: [
+            demo: :permanent
+          ],
+          strip_beams: [
+            keep: ["Docs"]
+          ]
+        ]
+      ]
     ]
   end
 
@@ -16,6 +26,14 @@ defmodule Mono.MixProject do
   #
   # Run "mix help deps" for examples and options.
   defp deps do
-    []
+    [
+      {:mix_test_watch, "~> 1.0", only: [:test], runtime: false}
+    ]
+  end
+
+  def cli do
+    [
+      preferred_envs: ["test.watch": :test]
+    ]
   end
 end

@@ -19,8 +19,5 @@ const component = () => {
   }
 }
 
-component.register = () => {
-  window.Alpine.data('hsClipboard', component)
-}
-
+component.id = "hs_clipboard"
 export default component

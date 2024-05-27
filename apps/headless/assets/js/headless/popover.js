@@ -57,8 +57,5 @@ const component = () => {
   }
 }
 
-component.register = () => {
-  window.Alpine.data('hsPopover', component)
-}
-
+component.id = "hs_popover"
 export default component

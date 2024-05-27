@@ -1,6 +1,11 @@
 defmodule Headless do
   use Phoenix.Component, global_prefixes: ~w(x-)
 
+  @components [:avatar, :clipboard, :popover, :toggle]
+
+  @doc false
+  def components, do: Enum.into(@components, %{}, &{&1, apply(__MODULE__, &1, [])})
+
   @doc """
   Avatar component
 
@@ -43,19 +48,22 @@ defmodule Headless do
   attr :src, :string, doc: "Image source URL"
   slot :inner_block, required: true
 
-  def use_avatar(assigns) do
-    render(assigns, %{
+  def use_avatar(assigns), do: make(assigns, avatar())
+
+  @doc false
+  def avatar do
+    %{
       root: %{
-        "x-data" => "hsAvatar"
+        "x-data" => "hs_avatar"
       },
       image: %{
         "x-bind" => "image",
-        "data-src" => assigns[:src]
+        "data-src" => :src
       },
       fallback: %{
         "x-bind" => "fallback"
       }
-    })
+    }
   end
 
   @doc """
@@ -108,11 +116,15 @@ defmodule Headless do
 
   slot :inner_block, required: true
 
-  def use_popover(assigns) do
-    render(assigns, %{
+  def use_popover(assigns), do: make(assigns, popover())
+
+  @doc false
+  def popover do
+    %{
       root: %{
-        "x-data" => "hsPopover",
+        "x-data" => "hs_popover",
         "x-bind" => "root"
+        # "id" => "hs-popover-#{:rand.uniform(1000)}"
       },
       trigger: %{
         "x-bind" => "trigger",
@@ -124,7 +136,7 @@ defmodule Headless do
         "tabindex" => "-1",
         "style" => "display: none;"
       }
-    })
+    }
   end
 
   @doc """
@@ -160,10 +172,16 @@ defmodule Headless do
 
   slot :inner_block, required: true
 
-  def use_toggle(assigns) do
-    render(assigns, %{
-      input: %{type: "checkbox", role: "switch"}
-    })
+  def use_toggle(assigns), do: make(assigns, toggle())
+
+  @doc false
+  def toggle do
+    %{
+      input: %{
+        "type" => "checkbox",
+        "role" => "switch"
+      }
+    }
   end
 
   @doc """
@@ -206,10 +224,13 @@ defmodule Headless do
 
   slot :inner_block, required: true
 
-  def use_clipboard(assigns) do
-    render(assigns, %{
+  def use_clipboard(assigns), do: make(assigns, clipboard())
+
+  @doc false
+  def clipboard do
+    %{
       root: %{
-        "x-data" => "hsClipboard"
+        "x-data" => "hs_clipboard"
       },
       trigger: %{
         "x-bind" => "trigger"
@@ -217,7 +238,7 @@ defmodule Headless do
       content: %{
         "x-bind" => "content"
       }
-    })
+    }
   end
 
   @doc """
@@ -308,11 +329,107 @@ defmodule Headless do
     """
   end
 
-  defp render(assigns, ctx) do
-    assigns = assign(assigns, ctx: ctx)
+  defp make(assigns, component) do
+    render(assigns, component)
+  end
+
+  defp render(assigns, nodes) do
+    nodes =
+      Enum.into(nodes, %{}, fn {node, attrs} ->
+        {node,
+         Enum.into(attrs, %{}, fn
+           {k, s} when is_binary(s) -> {k, s}
+           {k, a} when is_atom(a) -> {k, assigns[a]}
+         end)}
+      end)
+
+    assigns = assign(assigns, nodes: nodes)
 
     ~H"""
-    <%= render_slot(@inner_block, @ctx) %>
+    <%= render_slot(@inner_block, @nodes) %>
     """
+  end
+
+  @doc """
+  Replace `def` with `defc` to optimize component rendering by inlining static attributes.
+
+  ## Compile-time validation
+
+  Using `defc` will also check in compile-time if the referenced attributes are correct.
+
+  This definition (using `def`) will compile and crash in runtime due to undefined `wrong` node reference.
+
+
+        def toggle(assigns) do
+          ~H\"\"\"
+          <.use_toggle :let={t}>
+            <.input {t.wrong}/>
+          </.use_toggle>
+          \"\"\"
+        end
+
+        # => ** (KeyError) key :wrong not found in: (...)
+
+
+  When using `defc` it will not compile:
+
+
+        defc toggle(assigns) do
+          ~H\"\"\"
+          <.use_toggle :let={t}>
+            <.input {t.wrong}/>
+          </.use_toggle>
+          \"\"\"
+        end
+
+        # => ** (Phoenix.LiveView.Tokenizer.ParseError): Unknwon node "wrong" for component use_toggle
+
+
+  ## Example
+      defmodule ExampleAvatarComponents do
+        use Phoenix.Component
+        import Headless
+
+        attr :src, :any
+        attr :alt, :any
+        attr :initials, :string
+
+        defc avatar(assigns) do
+          ~H\"\"\"
+          <.use_avatar :let={a} src={@src}>
+            <div {a.root}>
+              <img {a.image} alt={@alt} />
+              <div {a.fallback}><%= @initials %></div>
+            </div>
+          </.use_avatar>
+          \"\"\"
+        end
+      end
+  """
+  defmacro defc(head, do: body) do
+    body =
+      Macro.prewalk(body, fn
+        {:sigil_H, meta, [{:<<>>, _meta, [expr]}, []]} ->
+          options = [
+            engine: Headless.Compiler,
+            file: __CALLER__.file,
+            line: __CALLER__.line + 1,
+            caller: __CALLER__,
+            indentation: meta[:indentation] || 0,
+            source: expr,
+            tag_handler: Phoenix.LiveView.HTMLEngine
+          ]
+
+          EEx.compile_string(expr, options)
+
+        ast ->
+          ast
+      end)
+
+    quote do
+      def unquote(head) do
+        unquote(body)
+      end
+    end
   end
 end

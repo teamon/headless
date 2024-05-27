@@ -7,7 +7,7 @@ kill_signal = 'SIGTERM'
 [env]
 
 [http_service]
-  internal_port = 5001
+  internal_port = 4000
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true

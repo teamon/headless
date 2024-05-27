@@ -9,12 +9,19 @@ export { Alpine, Avatar, Clipboard, Popover }
 export default {
   start () {
     window.Alpine = Alpine
-    this.register()
+
+    Alpine.data(Avatar.id, Avatar)
+    Alpine.data(Clipboard.id, Clipboard)
+    Alpine.data(Popover.id, Popover)
+
     Alpine.start()
   },
-  register () {
-    Avatar.register()
-    Clipboard.register()
-    Popover.register()
+
+  dom: {
+    onBeforeElUpdated (from, to) {
+      if (from._x_dataStack) {
+        Alpine.clone(from, to)
+      }
+    }
   }
 }
